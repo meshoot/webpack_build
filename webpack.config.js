@@ -1,14 +1,19 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
-  mode: 'development',
   entry: path.resolve(__dirname, 'src', 'index.js'),
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
+    new webpack.DefinePlugin({
+      NODE_ENV: JSON.stringify(NODE_ENV)
+    }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'index.html')
     })
@@ -34,7 +39,15 @@ module.exports = {
           // Compiles Sass to CSS
           'sass-loader',
         ]
-      }
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
     ]
   },
   devServer: {
@@ -43,6 +56,7 @@ module.exports = {
     noInfo: true,
     overlay: true,
     port: 9000
-  }
+  },
+  devtool: NODE_ENV === 'development' ?  'eval-cheap-source-map' : false
 };
  
