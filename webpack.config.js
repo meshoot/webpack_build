@@ -7,15 +7,16 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'index.js'),
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
+    filename: 'index.js',
+    path: path.resolve(__dirname, 'dist', 'js')
   },
   plugins: [
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify(NODE_ENV)
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html')
+      template: path.resolve(__dirname, 'src', 'templates', 'index.html'),
+      filename: '../index.html'
     })
   ],
   module: {
@@ -55,7 +56,7 @@ module.exports = {
     compress: true,
     noInfo: true,
     overlay: true,
-    port: 9000
+    port: 9001
   },
   devtool: NODE_ENV === 'development' ?  'eval-cheap-source-map' : false
 };
