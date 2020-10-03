@@ -1,11 +1,28 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+const fs = require('fs');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
+function generateHtmlPlugins(templateDir) {
+  const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir));
+  
+  return templateFiles.map(item => {
+    const parts = item.split('.'),
+      name = parts[0],
+      extension = parts[1];
+    
+      return new HtmlWebpackPlugin({
+        filename: `../${name}.html`,
+        template: path.resolve(__dirname, `${templateDir}/${name}.${extension}`),
+        inject: false,
+      })
+  })
+}
+
 module.exports = {
-  entry: path.resolve(__dirname, 'src', 'index.js'),
+  entry: path.resolve(__dirname, 'src', 'js', 'index.js'),
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist', 'js')
@@ -17,8 +34,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'templates', 'index.html'),
       filename: '../index.html'
-    })
-  ],
+    }),
+  ].concat(generateHtmlPlugins(path.resolve(__dirname, 'src', 'templates'))),
   module: {
     rules: [
       {
@@ -56,7 +73,7 @@ module.exports = {
     compress: true,
     noInfo: true,
     overlay: true,
-    port: 9001
+    port: 9000
   },
   devtool: NODE_ENV === 'development' ?  'eval-cheap-source-map' : false
 };
